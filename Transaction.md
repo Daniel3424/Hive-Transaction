@@ -26,7 +26,7 @@ drwxr-xr-x   - ekoifman staff          0 2016-06-09 17:07 /user/hive/warehouse/t
 -rw-r--r--   1 ekoifman staff        610 2016-06-09 17:07 /user/hive/warehouse/t/delta_0000024_0000024_0000/bucket_00000
 ```
 
-# 컴팩션
+# Compaction
 컴팩션은 델타 파일(delta_xxx)을 정리하는 작업입니다. 트랜잭션이 많아지면 델타 파일의 개수가 늘어나고 파일의 사이즈가 커지면서 네임노드의 관리포인트가 늘어나게 됩니다. 이 부하를 줄이기 위해서 백그라운드 서비스로 컴팩션이 수행됩니다.
 
 델타 파일이 많아지면, 마이너 컴팩션이 발생하여 델타 파일을 하나로 합치고, 델타 파일이 점점 커지면 메이저 컴팩션이 발생하여 베이스 파일의 내용을 수정하게 됩니다. 컴팩션은 트랜잭션이 발생할 때 처리되지 않고, 주기적으로 수행되는 컴팩션 스케줄에 따라 맵리듀스 잡으로 실행됩니다.
@@ -48,7 +48,7 @@ drwxr-xr-x   - ekoifman staff          0 2016-06-09 17:07 /user/hive/warehouse/t
 -rw-r--r--   1 ekoifman staff        610 2016-06-09 17:07 /user/hive/warehouse/t/delta_0000024_0000024_0000/bucket_00000
 ```
 
-# 트랜잭션, 컴팩션 설정
+# Transaction and Compaction setting
 트랜잭션은 `hive.txn.manager`과 `hive.support.concurrency`를 설정해야 합니다.
 ```
 set hive.support.concurrency=true;
@@ -61,7 +61,7 @@ set hive.compactor.worker.threads=3;
 ```
  - [ConfigurationProperties-TransactionsandCompactor](https://cwiki.apache.org/confluence/display/Hive/Configuration+Properties#ConfigurationProperties-TransactionsandCompactor)
 
-# 트랜잭션 테이블 생성
+# Create transaction table
 트랜잭션 테이블은 버켓팅을 설정해야 하고, 테이블 저장 타입을 ORC로 설정해야 합니다. 그리고 테이블 프로퍼티에 `"transactional"="true"`를 설정하면 됩니다.
 ```
 CREATE TABLE table_name (
@@ -86,7 +86,7 @@ ALTER TABLE table_name COMPACT 'major'
    WITH OVERWRITE TBLPROPERTIES ("tblprops.orc.compress.size"="8192");         -- change any other Hive table properties
 ```
 
-# 트랜잭션 확인
+# Transaction confirm
 트랜잭션 처리 상황은 다음의 명령으로 확인합니다.
 ```
 hive> show transactions;
